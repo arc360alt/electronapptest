@@ -1,11 +1,11 @@
 {
   "name": "ark-todo-notes",
-  "version": "1.0.0",
-  "description": "Ark Todo & Notes app",
+  "version": "1.2.0",
+  "description": "A Notes App",
   "main": "main.js",
   "build": {
-    "appId": "com.yourdomain.arktodo",
-    "productName": "Ark Todo & Notes",
+    "appId": "com.ark.notesapp",
+    "productName": "A Notes App",
     "files": [
       "**/*"
     ],
@@ -18,7 +18,11 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "build/icon.icns"
+      "icon": "build/icon.icns",
+      "arch": [
+        "x64",
+        "arm64"
+      ]
     },
     "linux": {
       "target": ["AppImage", "deb"],
@@ -34,8 +38,7 @@
     "electron-builder": "^24.0.0"
   },
   "author": {
-  "name": "ark",
-  "email": "ark@arc360hub.com"
-}
-
+    "name": "ark",
+    "email": "ark@arc360hub.com"
+  }
 }
