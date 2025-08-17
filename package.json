@@ -1,6 +1,6 @@
 {
-  "name": "ark-todo-notes",
-  "version": "1.2.0",
+  "name": "a-notes-app",
+  "version": "1.0.0",
   "description": "A Notes App",
   "main": "main.js",
   "build": {
@@ -18,11 +18,7 @@
     },
     "mac": {
       "target": "dmg",
-      "icon": "build/icon.icns",
-      "arch": [
-        "x64",
-        "arm64"
-      ]
+      "icon": "build/icon.icns"
     },
     "linux": {
       "target": ["AppImage", "deb"],
@@ -35,7 +31,7 @@
   },
   "devDependencies": {
     "electron": "^30.0.0",
-    "electron-builder": "^24.0.0"
+    "electron-builder": "^24.13.3"
   },
   "author": {
     "name": "ark",
