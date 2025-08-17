@@ -1,0 +1,36 @@
+{
+  "name": "ark-todo-notes",
+  "version": "1.0.0",
+  "description": "Ark Todo & Notes app",
+  "main": "main.js",
+  "build": {
+    "appId": "com.yourdomain.arktodo",
+    "productName": "Ark Todo & Notes",
+    "files": [
+      "**/*"
+    ],
+    "directories": {
+      "buildResources": "build"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "icon": "build"
+    }
+  },
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.0.0"
+  }
+}
