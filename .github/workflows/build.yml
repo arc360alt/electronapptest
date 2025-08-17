@@ -1,9 +1,7 @@
 name: Build Electron App
 
 on:
-  push:
-    tags:
-      - "v*"   # build when you push version tags like v1.0.0
+  workflow_dispatch:   # Manual trigger from GitHub Actions UI
 
 jobs:
   build:
