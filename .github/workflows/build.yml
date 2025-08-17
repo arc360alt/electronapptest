@@ -44,9 +44,12 @@ jobs:
       - name: Build Electron app
         run: |
           if [ "${{ runner.os }}" == "macOS" ]; then
-            npm run dist -- --mac --x64 --arm64
+            # Universal macOS build (x64 + arm64)
+            npx electron-builder --mac --x64 --arm64
+          elif [ "${{ runner.os }}" == "Windows" ]; then
+            npx electron-builder --win
           else
-            npm run dist
+            npx electron-builder --linux
           fi
         shell: bash
         continue-on-error: true
