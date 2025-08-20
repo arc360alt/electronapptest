@@ -1035,7 +1035,157 @@
 [data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
     background: var(--md-sys-color-primary);
 }
+/* Sync-related styles - ADD THESE TO YOUR CSS */
+.sync-section {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    order: 3; /* After data controls */
+}
 
+.sync-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    background-color: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.sync-status.online {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+
+.sync-status.syncing {
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+}
+
+.sync-button {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.sync-button:hover {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+
+.sync-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.auth-form input {
+    padding: 8px 12px;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: 6px;
+    background-color: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    font-size: 14px;
+}
+
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--md-sys-color-primary);
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.auth-button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.auth-button.primary {
+    background-color: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+
+.auth-button.secondary {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+
+.user-info {
+    font-size: 12px;
+    color: var(--md-sys-color-on-surface-variant);
+    padding: 8px 12px;
+    background-color: var(--md-sys-color-surface-variant);
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+.sync-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background-color: var(--md-sys-color-surface-variant);
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.sync-section-header:hover {
+    background-color: var(--md-sys-color-primary-container);
+}
+
+.sync-section-header h4 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.sync-collapse-icon {
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+.sync-section-content {
+    transition: max-height 0.3s ease-out, opacity 0.2s ease-out;
+    overflow: hidden;
+}
+
+.sync-section-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+}
+small {
+    display: block;
+    font-size: 11px;
+    color: var(--md-sys-color-on-surface-variant);
+    line-height: 1.3;
+    margin-bottom: 4px;
+}
     </style>
 </head>
 <body>
@@ -1052,31 +1202,71 @@
 
 
     <div class="app-container">
-        <div class="sidebar">
-            <h1>A Notes app</h1>
-            
-            <div class="mode-selector">
-                <button class="mode-button active" data-mode="todo">📋 Todo Lists</button>
-                <button class="mode-button" data-mode="notes">📝 Notes</button>
-                <button class="mode-button" data-mode="kanban">📊 Kanban Board</button>
-            </div>
+<div class="sidebar">
+    <h1>A Notes app</h1>
+    
+    <div class="mode-selector">
+        <button class="mode-button active" data-mode="todo">📋 Todo Lists</button>
+        <button class="mode-button" data-mode="notes">📝 Notes</button>
+        <button class="mode-button" data-mode="kanban">📊 Kanban Board</button>
+    </div>
 
-            <div class="lists-section">
-                <h3 id="lists-title">Todo Lists</h3>
-                <div id="lists-container"></div>
-                <button class="add-list-button" id="add-list-btn">+ Add New</button>
-            </div>
+    <div class="lists-section">
+        <h3 id="lists-title">Todo Lists</h3>
+        <div id="lists-container"></div>
+        <button class="add-list-button" id="add-list-btn">+ Add New</button>
+    </div>
 
-            <div class="data-controls">
-                <button class="data-button" id="export-data-btn">📤 Export Data</button>
-                <button class="data-button" id="import-data-btn">📥 Import Data</button>
-                <input type="file" id="import-file-input" accept=".json" style="display: none;">
-            </div>
-
-            <div class="theme-toggle">
-                <button class="theme-button" id="theme-toggle">🌙 Dark Mode</button>
+    <!-- SYNC SECTION - ADD THIS NEW SECTION -->
+<div class="sync-section" id="sync-section">
+    <div class="sync-section-header" onclick="app.toggleSyncSection()">
+        <h4>🔄 Sync</h4>
+        <span class="sync-collapse-icon">▼</span>
+    </div>
+    
+    <div class="sync-section-content" id="sync-section-content">
+        <div class="sync-status" id="sync-status">
+            <span>🔄</span>
+            <span id="sync-status-text">Not connected</span>
+        </div>
+        
+        <!-- Login/Register Form (shown when not logged in) -->
+        <div id="auth-container" style="display: none;">
+            <div class="auth-form" id="auth-form">
+                <input type="text" id="auth-username" placeholder="Username" maxlength="30">
+                <input type="password" id="auth-password" placeholder="Password" minlength="6">
+                <div class="auth-buttons">
+                    <button class="auth-button primary" id="login-btn">Login</button>
+                    <button class="auth-button secondary" id="register-btn">Register</button>
+                </div>
             </div>
         </div>
+        
+        <!-- User Info (shown when logged in) -->
+        <div id="user-container" style="display: none;">
+            <div class="user-info" id="user-info">
+                <div>👤 <span id="username-display"></span></div>
+                <div>📅 <span id="last-sync-display">Never</span></div>
+            </div>
+            <button class="sync-button" id="sync-up-btn">⬆️ Sync Up</button>
+            <button class="sync-button" id="sync-down-btn">⬇️ Sync Down</button>
+            <button class="sync-button" id="logout-btn" style="background-color: var(--md-sys-color-error-container); color: var(--md-sys-color-on-error-container);">Logout</button>
+        </div>
+        <small></small>
+        <small>If you need your password reset or account deleted, email me at voidyt16@gmail.com</small>
+    </div>
+</div>
+
+    <div class="data-controls">
+        <button class="data-button" id="export-data-btn">📤 Export Data</button>
+        <button class="data-button" id="import-data-btn">📥 Import Data</button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+    </div>
+
+    <div class="theme-toggle">
+        <button class="theme-button" id="theme-toggle">🌙 Dark Mode</button>
+    </div>
+</div>
 
         <div class="main-content">
             <div class="header">
@@ -1092,27 +1282,38 @@
 
     <script>
         class MaterialYouApp {
-            constructor() {
-                this.currentMode = 'todo';
-                this.currentList = 'default';
-                this.data = this.loadData();
-                this.isDarkMode = this.loadFromMemory('darkMode', false);
-                this.draggedNoteIndex = null;
-                this.draggedTodoIndex = null;
-                this.isDragging = false;
-                this.dragOffset = { x: 0, y: 0 };
-                
-                this.init();
-            }
+        constructor() {
+            this.currentMode = 'todo';
+            this.currentList = 'default';
+            this.data = this.loadData();
+            this.isDarkMode = this.loadFromMemory('darkMode', false);
+            this.draggedNoteIndex = null;
+            this.draggedTodoIndex = null;
+            this.isDragging = false;
+            this.dragOffset = { x: 0, y: 0 };
 
-            loadFromMemory(key, defaultValue) {
-                try {
-                    const stored = localStorage.getItem(key);
-                    return stored !== null ? JSON.parse(stored) : defaultValue;
-                } catch (e) {
-                    return defaultValue;
-                }
-            }
+            this.init();
+
+            // Initialize sync manager AFTER the app is initialized
+            setTimeout(() => {
+                this.syncManager = new SyncManager(this);
+            }, 100);
+        }
+
+
+          loadFromMemory(key, defaultValue) {
+              try {
+                  // Don't use localStorage for sync-related data if we have a sync manager
+                  if (key === 'materialYouAppData' && this.syncManager && this.syncManager.isLoggedIn) {
+                      // If logged in, prioritize server data
+                      return defaultValue;
+                  }
+                  const stored = localStorage.getItem(key);
+                  return stored !== null ? JSON.parse(stored) : defaultValue;
+              } catch (e) {
+                  return defaultValue;
+              }
+          }
 
             saveToMemory(key, value) {
                 try {
@@ -1181,6 +1382,7 @@
                 this.applyTheme();
                 this.renderSidebar();
                 this.renderContent();
+              	this.restoreSyncSectionState();
             }
 
             setupEventListeners() {
@@ -1799,166 +2001,218 @@ setupNoteResize(card, index) {
     });
 }
 
-            renderKanbanContent(container) {
-                const columns = this.data.kanban[this.currentList]?.columns || {};
-                
-                if (Object.keys(columns).length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <h3>No columns yet</h3>
-                            <p>Click the + button to add your first column</p>
-                        </div>
-                    `;
-                    return;
-                }
+renderKanbanContent(container) {
+    const kanbanData = this.data.kanban[this.currentList];
+    const columns = kanbanData?.columns || {};
+    
+    if (Object.keys(columns).length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <h3>No columns yet</h3>
+                <p>Click the + button to add your first column</p>
+            </div>
+        `;
+        return;
+    }
 
-                container.innerHTML = `
-                    <div class="kanban-board">
-                        ${Object.keys(columns).map(columnId => `
-                            <div class="kanban-column" data-column="${columnId}">
-                                <div class="kanban-header">
-                                    <span class="kanban-title">${this.escapeHtml(columns[columnId].name)}</span>
-                                    <button class="kanban-delete" onclick="app.deleteColumn('${columnId}')">×</button>
-                                </div>
-                                <div class="kanban-items" data-column="${columnId}">
-                                    ${columns[columnId].items.map((item, index) => `
-                                        <div class="kanban-item" draggable="true" data-item="${index}" data-column="${columnId}">
-                                            ${this.escapeHtml(item.text)}
-                                            <button class="kanban-item-delete" onclick="event.stopPropagation(); app.deleteKanbanItem('${columnId}', ${index})">×</button>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <button class="add-card-button" data-column-id="${columnId}">+ Add Card</button>
+    // Use column_order if available, otherwise fall back to Object.keys
+    let columnOrder;
+    if (kanbanData && kanbanData.column_order && Array.isArray(kanbanData.column_order)) {
+        // Filter to only include columns that actually exist
+        columnOrder = kanbanData.column_order.filter(columnId => columns[columnId]);
+    } else {
+        // Fallback: use existing keys, but try to maintain standard order if possible
+        const allKeys = Object.keys(columns);
+        const standardOrder = ['todo', 'doing', 'done'];
+        columnOrder = [];
+        
+        // Add standard columns in order if they exist
+        for (const stdCol of standardOrder) {
+            if (allKeys.includes(stdCol)) {
+                columnOrder.push(stdCol);
+            }
+        }
+        
+        // Add any remaining columns
+        for (const key of allKeys) {
+            if (!columnOrder.includes(key)) {
+                columnOrder.push(key);
+            }
+        }
+        
+        // Save the determined order back to data
+        if (!kanbanData.column_order) {
+            kanbanData.column_order = columnOrder;
+            this.saveData();
+        }
+    }
+
+    container.innerHTML = `
+        <div class="kanban-board">
+            ${columnOrder.map(columnId => `
+                <div class="kanban-column" data-column="${columnId}">
+                    <div class="kanban-header">
+                        <span class="kanban-title">${this.escapeHtml(columns[columnId].name)}</span>
+                        <button class="kanban-delete" onclick="app.deleteColumn('${columnId}')">×</button>
+                    </div>
+                    <div class="kanban-items" data-column="${columnId}">
+                        ${columns[columnId].items.map((item, index) => `
+                            <div class="kanban-item" draggable="true" data-item="${index}" data-column="${columnId}">
+                                ${this.escapeHtml(item.text)}
+                                <button class="kanban-item-delete" onclick="event.stopPropagation(); app.deleteKanbanItem('${columnId}', ${index})">×</button>
                             </div>
                         `).join('')}
                     </div>
-                `;
+                    <button class="add-card-button" data-column-id="${columnId}">+ Add Card</button>
+                </div>
+            `).join('')}
+        </div>
+    `;
 
-                // Add event listeners after rendering
-                this.setupKanbanEventListeners(container);
+    // Add event listeners after rendering
+    this.setupKanbanEventListeners(container);
+}
+
+setupKanbanEventListeners(container) {
+    // Add card button listeners
+    container.querySelectorAll('.add-card-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const columnId = button.dataset.columnId;
+            this.showAddKanbanItemModal(columnId);
+        });
+    });
+
+    // Drag and drop listeners
+    container.querySelectorAll('.kanban-item').forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            const columnId = item.dataset.column;
+            const itemIndex = parseInt(item.dataset.item);
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                columnId: columnId,
+                itemIndex: itemIndex
+            }));
+            item.classList.add('dragging');
+        });
+
+        item.addEventListener('dragend', (e) => {
+            item.classList.remove('dragging');
+        });
+    });
+
+    // Drop zone listeners
+    container.querySelectorAll('.kanban-items').forEach(dropZone => {
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = 'var(--md-sys-color-primary-container)';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            if (!e.relatedTarget || !dropZone.contains(e.relatedTarget)) {
+                dropZone.style.backgroundColor = '';
             }
+        });
 
-            setupKanbanEventListeners(container) {
-                // Add card button listeners
-                container.querySelectorAll('.add-card-button').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        const columnId = button.dataset.columnId;
-                        this.showAddKanbanItemModal(columnId);
-                    });
-                });
-
-                // Drag and drop listeners
-                container.querySelectorAll('.kanban-item').forEach(item => {
-                    item.addEventListener('dragstart', (e) => {
-                        const columnId = item.dataset.column;
-                        const itemIndex = parseInt(item.dataset.item);
-                        e.dataTransfer.setData('text/plain', JSON.stringify({
-                            columnId: columnId,
-                            itemIndex: itemIndex
-                        }));
-                        item.classList.add('dragging');
-                    });
-
-                    item.addEventListener('dragend', (e) => {
-                        item.classList.remove('dragging');
-                    });
-                });
-
-                // Drop zone listeners
-                container.querySelectorAll('.kanban-items').forEach(dropZone => {
-                    dropZone.addEventListener('dragover', (e) => {
-                        e.preventDefault();
-                        dropZone.style.backgroundColor = 'var(--md-sys-color-primary-container)';
-                    });
-
-                    dropZone.addEventListener('dragleave', (e) => {
-                        if (!e.relatedTarget || !dropZone.contains(e.relatedTarget)) {
-                            dropZone.style.backgroundColor = '';
-                        }
-                    });
-
-                    dropZone.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        dropZone.style.backgroundColor = '';
-                        
-                        try {
-                            const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-                            const targetColumnId = dropZone.dataset.column;
-                            this.moveKanbanItem(data.columnId, data.itemIndex, targetColumnId);
-                        } catch (error) {
-                            console.error('Drop error:', error);
-                        }
-                    });
-                });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '';
+            
+            try {
+                const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+                const targetColumnId = dropZone.dataset.column;
+                this.moveKanbanItem(data.columnId, data.itemIndex, targetColumnId);
+            } catch (error) {
+                console.error('Drop error:', error);
             }
+        });
+    });
+}
 
-            showAddKanbanItemModal(columnId) {
-                const modal = this.createModal('Add Card', `
-                    <div class="form-group">
-                        <label class="form-label">Card Text</label>
-                        <textarea class="form-textarea" id="kanban-item-text" placeholder="Enter card content..." rows="3"></textarea>
-                    </div>
-                    <div class="button-group">
-                        <button class="button button-secondary" onclick="app.closeModal()">Cancel</button>
-                        <button class="button button-primary" onclick="app.addKanbanItemFromModal('${columnId}')">Add Card</button>
-                    </div>
-                `);
-                document.body.appendChild(modal);
-                document.getElementById('kanban-item-text').focus();
-            }
+showAddKanbanItemModal(columnId) {
+    const modal = this.createModal('Add Card', `
+        <div class="form-group">
+            <label class="form-label">Card Text</label>
+            <textarea class="form-textarea" id="kanban-item-text" placeholder="Enter card content..." rows="3"></textarea>
+        </div>
+        <div class="button-group">
+            <button class="button button-secondary" onclick="app.closeModal()">Cancel</button>
+            <button class="button button-primary" onclick="app.addKanbanItemFromModal('${columnId}')">Add Card</button>
+        </div>
+    `);
+    document.body.appendChild(modal);
+    document.getElementById('kanban-item-text').focus();
+}
 
-            addKanbanItemFromModal(columnId) {
-                const text = document.getElementById('kanban-item-text').value.trim();
-                if (!text) return;
+addKanbanItemFromModal(columnId) {
+    const text = document.getElementById('kanban-item-text').value.trim();
+    if (!text) return;
 
-                if (!this.data.kanban[this.currentList]) {
-                    this.data.kanban[this.currentList] = { name: 'New Board', columns: {} };
-                }
+    if (!this.data.kanban[this.currentList]) {
+        this.data.kanban[this.currentList] = { 
+            name: 'New Board', 
+            columns: {},
+            column_order: [] 
+        };
+    }
 
-                if (!this.data.kanban[this.currentList].columns[columnId]) {
-                    this.data.kanban[this.currentList].columns[columnId] = { name: 'New Column', items: [] };
-                }
+    if (!this.data.kanban[this.currentList].columns[columnId]) {
+        this.data.kanban[this.currentList].columns[columnId] = { name: 'New Column', items: [] };
+        
+        // Add to column_order if not present
+        if (!this.data.kanban[this.currentList].column_order.includes(columnId)) {
+            this.data.kanban[this.currentList].column_order.push(columnId);
+        }
+    }
 
-                this.data.kanban[this.currentList].columns[columnId].items.push({
-                    text: text,
-                    id: Date.now()
-                });
+    this.data.kanban[this.currentList].columns[columnId].items.push({
+        text: text,
+        id: Date.now()
+    });
 
-                this.saveData();
-                this.closeModal();
-                this.renderContent();
-            }
+    this.saveData();
+    this.closeModal();
+    this.renderContent();
+}
 
-            deleteColumn(columnId) {
-                delete this.data.kanban[this.currentList].columns[columnId];
-                this.saveData();
-                this.renderContent();
-            }
+deleteColumn(columnId) {
+    // Remove from columns
+    delete this.data.kanban[this.currentList].columns[columnId];
+    
+    // Remove from column_order
+    if (this.data.kanban[this.currentList].column_order) {
+        const index = this.data.kanban[this.currentList].column_order.indexOf(columnId);
+        if (index > -1) {
+            this.data.kanban[this.currentList].column_order.splice(index, 1);
+        }
+    }
+    
+    this.saveData();
+    this.renderContent();
+}
 
-            deleteKanbanItem(columnId, index) {
-                if (this.data.kanban[this.currentList] && this.data.kanban[this.currentList].columns[columnId]) {
-                    this.data.kanban[this.currentList].columns[columnId].items.splice(index, 1);
-                    this.saveData();
-                    this.renderContent();
-                }
-            }
+deleteKanbanItem(columnId, index) {
+    if (this.data.kanban[this.currentList] && this.data.kanban[this.currentList].columns[columnId]) {
+        this.data.kanban[this.currentList].columns[columnId].items.splice(index, 1);
+        this.saveData();
+        this.renderContent();
+    }
+}
 
-            moveKanbanItem(sourceColumnId, itemIndex, targetColumnId) {
-                if (sourceColumnId === targetColumnId) return;
+moveKanbanItem(sourceColumnId, itemIndex, targetColumnId) {
+    if (sourceColumnId === targetColumnId) return;
 
-                const sourceColumn = this.data.kanban[this.currentList].columns[sourceColumnId];
-                const targetColumn = this.data.kanban[this.currentList].columns[targetColumnId];
-                
-                if (!sourceColumn || !targetColumn || !sourceColumn.items[itemIndex]) return;
+    const sourceColumn = this.data.kanban[this.currentList].columns[sourceColumnId];
+    const targetColumn = this.data.kanban[this.currentList].columns[targetColumnId];
+    
+    if (!sourceColumn || !targetColumn || !sourceColumn.items[itemIndex]) return;
 
-                // Move item from source to target
-                const item = sourceColumn.items.splice(itemIndex, 1)[0];
-                targetColumn.items.push(item);
+    // Move item from source to target
+    const item = sourceColumn.items.splice(itemIndex, 1)[0];
+    targetColumn.items.push(item);
 
-                this.saveData();
-                this.renderContent();
-            }
+    this.saveData();
+    this.renderContent();
+}
 
             // Todo operations
             toggleTodo(index) {
@@ -2413,6 +2667,38 @@ Write your note content here. You can use:
                     }, 300);
                 }, 3000);
             }
+          toggleSyncSection() {
+    const content = document.getElementById('sync-section-content');
+    const icon = document.querySelector('.sync-collapse-icon');
+    const isCollapsed = content.classList.contains('collapsed');
+    
+    if (isCollapsed) {
+        content.classList.remove('collapsed');
+        content.style.maxHeight = content.scrollHeight + 'px';
+        icon.textContent = '▼';
+        icon.style.transform = 'rotate(0deg)';
+        this.saveToMemory('syncSectionCollapsed', false);
+    } else {
+        content.classList.add('collapsed');
+        content.style.maxHeight = '0px';
+        icon.textContent = '▲';
+        icon.style.transform = 'rotate(180deg)';
+        this.saveToMemory('syncSectionCollapsed', true);
+    }
+}
+          restoreSyncSectionState() {
+    const isCollapsed = this.loadFromMemory('syncSectionCollapsed', false);
+    if (isCollapsed) {
+        const content = document.getElementById('sync-section-content');
+        const icon = document.querySelector('.sync-collapse-icon');
+        if (content && icon) {
+            content.classList.add('collapsed');
+            content.style.maxHeight = '0px';
+            icon.textContent = '▲';
+            icon.style.transform = 'rotate(180deg)';
+        }
+    }
+}
         }
 
         // Initialize the app
@@ -2468,6 +2754,7 @@ Write your note content here. You can use:
                 e.preventDefault();
             }
         });
+
         const { ipcRenderer } = require('electron');
         document.getElementById('min-btn').addEventListener('click', () => {
         ipcRenderer.send('window-control', 'minimize');
@@ -2481,6 +2768,312 @@ Write your note content here. You can use:
         ipcRenderer.send('window-control', 'close');
         });
 
+class SyncManager {
+    constructor(app) {
+        this.app = app;
+        this.apiBase = 'https://loginapinote.arc360hub.com/api';
+        this.sessionToken = this.loadSessionToken();
+        this.isLoggedIn = false;
+        this.username = '';
+        
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.checkSession();
+        this.updateUI();
+    }
+    
+    setupEventListeners() {
+        document.getElementById('login-btn').addEventListener('click', () => this.login());
+        document.getElementById('register-btn').addEventListener('click', () => this.register());
+        document.getElementById('logout-btn').addEventListener('click', () => this.logout());
+        document.getElementById('sync-up-btn').addEventListener('click', () => this.syncUp());
+        document.getElementById('sync-down-btn').addEventListener('click', () => this.syncDown());
+        
+        // Enter key support for auth form
+        document.getElementById('auth-username').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') document.getElementById('auth-password').focus();
+        });
+        document.getElementById('auth-password').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') this.login();
+        });
+    }
+    
+    loadSessionToken() {
+        try {
+            return localStorage.getItem('sync_session_token');
+        } catch (e) {
+            return null;
+        }
+    }
+    
+    saveSessionToken(token) {
+        try {
+            if (token) {
+                localStorage.setItem('sync_session_token', token);
+            } else {
+                localStorage.removeItem('sync_session_token');
+            }
+        } catch (e) {
+            console.warn('Failed to save session token');
+        }
+    }
+    
+    async checkSession() {
+        if (!this.sessionToken) return;
+        
+        try {
+            const response = await fetch(`${this.apiBase}/user/info`, {
+                headers: { 'Authorization': `Bearer ${this.sessionToken}` }
+            });
+            
+            if (response.ok) {
+                const data = await response.json();
+                this.isLoggedIn = true;
+                this.username = data.username;
+                this.updateSyncStatus('online', `Logged in as ${this.username}`);
+            } else {
+                this.sessionToken = null;
+                this.saveSessionToken(null);
+            }
+        } catch (error) {
+            this.updateSyncStatus('offline', 'Server unavailable');
+        }
+    }
+    
+    async login() {
+        const username = document.getElementById('auth-username').value.trim();
+        const password = document.getElementById('auth-password').value;
+        
+        if (!username || !password) {
+            this.app.showNotification('Please enter username and password', 'error');
+            return;
+        }
+        
+        try {
+            this.updateSyncStatus('syncing', 'Logging in...');
+            
+            const response = await fetch(`${this.apiBase}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.sessionToken = data.session_token;
+                this.saveSessionToken(this.sessionToken);
+                this.isLoggedIn = true;
+                this.username = data.username;
+                
+                // Clear form
+                document.getElementById('auth-username').value = '';
+                document.getElementById('auth-password').value = '';
+                
+                this.updateUI();
+                this.updateSyncStatus('online', `Logged in as ${this.username}`);
+                this.app.showNotification('Login successful!', 'success');
+            } else {
+                this.updateSyncStatus('offline', 'Login failed');
+                this.app.showNotification(data.error, 'error');
+            }
+        } catch (error) {
+            this.updateSyncStatus('offline', 'Connection failed');
+            this.app.showNotification('Connection failed', 'error');
+        }
+    }
+    
+    async register() {
+        const username = document.getElementById('auth-username').value.trim();
+        const password = document.getElementById('auth-password').value;
+        
+        if (!username || !password) {
+            this.app.showNotification('Please enter username and password', 'error');
+            return;
+        }
+        
+        if (username.length < 3) {
+            this.app.showNotification('Username must be at least 3 characters', 'error');
+            return;
+        }
+        
+        if (password.length < 6) {
+            this.app.showNotification('Password must be at least 6 characters', 'error');
+            return;
+        }
+        
+        try {
+            this.updateSyncStatus('syncing', 'Creating account...');
+            
+            const response = await fetch(`${this.apiBase}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.app.showNotification('Account created! Please login.', 'success');
+                this.updateSyncStatus('offline', 'Account created');
+                // Automatically login after successful registration
+                setTimeout(() => this.login(), 500);
+            } else {
+                this.updateSyncStatus('offline', 'Registration failed');
+                this.app.showNotification(data.error, 'error');
+            }
+        } catch (error) {
+            this.updateSyncStatus('offline', 'Connection failed');
+            this.app.showNotification('Connection failed', 'error');
+        }
+    }
+    
+    async logout() {
+        try {
+            if (this.sessionToken) {
+                await fetch(`${this.apiBase}/logout`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${this.sessionToken}` }
+                });
+            }
+        } catch (error) {
+            // Ignore logout errors
+        }
+        
+        this.sessionToken = null;
+        this.saveSessionToken(null);
+        this.isLoggedIn = false;
+        this.username = '';
+        
+        this.updateUI();
+        this.updateSyncStatus('offline', 'Logged out');
+        this.app.showNotification('Logged out successfully', 'success');
+    }
+    
+    async syncUp() {
+        if (!this.isLoggedIn) {
+            this.app.showNotification('Please login first', 'error');
+            return;
+        }
+        
+        try {
+            this.updateSyncStatus('syncing', 'Syncing up...');
+            document.getElementById('sync-up-btn').disabled = true;
+            
+            const response = await fetch(`${this.apiBase}/sync/upload`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.sessionToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ data: this.app.data })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                this.updateSyncStatus('online', `Synced up - ${this.formatDate(result.last_sync)}`);
+                this.app.showNotification('Data synced to cloud!', 'success');
+                this.updateLastSync(result.last_sync);
+            } else {
+                this.updateSyncStatus('online', 'Sync failed');
+                this.app.showNotification(result.error, 'error');
+            }
+        } catch (error) {
+            this.updateSyncStatus('offline', 'Connection failed');
+            this.app.showNotification('Sync failed - connection error', 'error');
+        } finally {
+            document.getElementById('sync-up-btn').disabled = false;
+        }
+    }
+    
+    async syncDown() {
+        if (!this.isLoggedIn) {
+            this.app.showNotification('Please login first', 'error');
+            return;
+        }
+        
+        try {
+            this.updateSyncStatus('syncing', 'Syncing down...');
+            document.getElementById('sync-down-btn').disabled = true;
+            
+            const response = await fetch(`${this.apiBase}/sync/download`, {
+                headers: { 'Authorization': `Bearer ${this.sessionToken}` }
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // Confirm before overwriting local data
+                if (confirm('This will replace your local data with cloud data. Continue?')) {
+                    this.app.data = result.data;
+                    this.app.saveData();
+                    this.app.renderSidebar();
+                    this.app.renderContent();
+                    
+                    this.updateSyncStatus('online', `Synced down - ${this.formatDate(result.last_sync)}`);
+                    this.app.showNotification('Data synced from cloud!', 'success');
+                    this.updateLastSync(result.last_sync);
+                } else {
+                    this.updateSyncStatus('online', `Logged in as ${this.username}`);
+                }
+            } else {
+                this.updateSyncStatus('online', 'Sync failed');
+                this.app.showNotification(result.error, 'error');
+            }
+        } catch (error) {
+            this.updateSyncStatus('offline', 'Connection failed');
+            this.app.showNotification('Sync failed - connection error', 'error');
+        } finally {
+            document.getElementById('sync-down-btn').disabled = false;
+        }
+    }
+    
+    updateUI() {
+        const authContainer = document.getElementById('auth-container');
+        const userContainer = document.getElementById('user-container');
+        const usernameDisplay = document.getElementById('username-display');
+        
+        if (this.isLoggedIn) {
+            authContainer.style.display = 'none';
+            userContainer.style.display = 'block';
+            usernameDisplay.textContent = this.username;
+        } else {
+            authContainer.style.display = 'block';
+            userContainer.style.display = 'none';
+        }
+    }
+    
+    updateSyncStatus(status, text) {
+        const statusEl = document.getElementById('sync-status');
+        const textEl = document.getElementById('sync-status-text');
+        
+        statusEl.className = `sync-status ${status}`;
+        textEl.textContent = text;
+    }
+    
+    updateLastSync(syncTime) {
+        if (syncTime) {
+            const formatted = this.formatDate(syncTime);
+            document.getElementById('last-sync-display').textContent = formatted;
+        }
+    }
+    
+    formatDate(isoString) {
+        const date = new Date(isoString);
+        return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+		
+setInterval(() => {
+    if (window.app && window.app.syncManager && window.app.syncManager.isLoggedIn) {
+        // Auto-sync every 5 minutes
+        window.app.syncManager.syncUp();
+    }
+}, 1 * 60 * 1000);
+    }
+}
     </script>
 </body>
 </html>
