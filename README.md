@@ -7,3 +7,5 @@ Future features:
 - Fix the buggy workspace
 - Fix trackpad functionality on Notes Mode
 - Fix some other common bugs
+
+## Note: There wont be any updates for a while (untill tuesday or wenesday) Because im currently on vacation.
