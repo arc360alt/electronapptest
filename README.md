@@ -8,3 +8,4 @@
 ## Future features:
 - Already fixed/added all of these with the app remake
 - Report any bugs or give me sugjestions on what i could add next.
+- 
