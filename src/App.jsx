@@ -839,7 +839,7 @@ html, #root {
           margin-bottom: 8px;
         }
 
-        .mode-button {
+.mode-button {
           width: 100%;
           padding: 12px 16px;
           background: transparent;
@@ -852,10 +852,12 @@ html, #root {
           display: flex;
           align-items: center;
           gap: 8px;
+          outline: none; /* Add this to remove the purple ring */
         }
 
         .mode-button:hover {
           background: var(--primary-light);
+          border-color: var(--primary); /* Add this for the hover border */
         }
 
         .mode-button.active {
@@ -905,22 +907,24 @@ html, #root {
         }
 
 .control-button {
-          width: 100%; 
-          padding: 8px 12px; 
-          background: transparent; 
-          border: 1px solid var(--outline); 
-          border-radius: 12px; 
+          width: 100%;
+          padding: 8px 12px;
+          background: transparent;
+          border: 1px solid var(--outline);
+          border-radius: 12px;
           cursor: pointer;
           color: var(--on-surface);
           display: flex;
           align-items: center;
           gap: 8px;
-          justify-content: flex-start; 
-          transition: all 0.2s; 
+          justify-content: flex-start;
+          transition: all 0.2s;
+          outline: none; /* Add this to remove the purple ring */
         }
 
         .control-button:hover {
-          background: var(--primary-light); 
+          background: var(--primary-light); /* This already matches */
+          border-color: var(--primary); /* Add this for the hover border */
         }
 
 .main-content {
