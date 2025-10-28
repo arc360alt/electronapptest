@@ -110,6 +110,12 @@ jobs:
             token: ${{ secrets.GH_TOKEN }}
             name: Release ${{ github.run_number }}
             tag: release-${{ github.run_number }}
-            files: |
-              release/**/*
+            artifacts: |
+              release/windows/x64/*
+              release/windows/arm64/*
+              release/linux/x64/*
+              release/linux/arm64/*
+              release/macos/x64/*
+              release/macos/arm64/*
+
   
