@@ -1,16 +1,18 @@
 {
   "name": "ark-notes-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "type": "module",
   "main": "electron-main.mjs",
+  "author": "Ark",
+  "description": "A Notes App - A simple notes app built with Electron and Vite",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-  "electron:dev": "concurrently --kill-others \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
-  "electron:build": "npm run build && electron-builder"
+    "electron:dev": "concurrently --kill-others \"npm run dev\" \"wait-on http://localhost:5173 && electron .\"",
+    "electron:build": "npm run build && electron-builder"
   },
   "dependencies": {
     "lucide-react": "^0.548.0",
@@ -33,25 +35,27 @@
     "vite": "^7.1.7",
     "wait-on": "^9.0.1"
   },
-"build": {
-  "appId": "com.yourname.app",
-  "productName": "MyElectronApp",
-  "directories": {
-    "output": "release"
-  },
-  "files": [
-    "dist/**/*",
-    "electron-main.mjs",
-    "package.json"
-  ],
-  "win": {
-    "target": "nsis"
-  },
-  "mac": {
-    "target": "dmg"
-  },
-  "linux": {
-    "target": "AppImage"
+  "build": {
+    "appId": "com.ark.anotesapp",
+    "productName": "ANotesApp",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron-main.mjs",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "mac": {
+      "target": "dmg",
+      "identity": null
+    },
+    "linux": {
+      "target": "AppImage"
+    },
+    "publish": null
   }
-}
 }
