@@ -4,8 +4,8 @@
   "version": "2.0.0",
   "type": "module",
   "main": "electron-main.mjs",
-  "author": "Your Name",
-  "description": "ANotesApp - A simple notes app built with Electron and Vite",
+  "author": "Ark",
+  "description": "A Notes App - A simple notes app built with Electron and Vite",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
