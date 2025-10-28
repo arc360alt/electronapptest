@@ -904,21 +904,23 @@ html, #root {
           gap: 8px;
         }
 
-        .control-button {
-          padding: 10px;
-          background: var(--surface-variant);
-          border: none;
-          border-radius: 8px;
+.control-button {
+          width: 100%; 
+          padding: 8px 12px; 
+          background: transparent; 
+          border: 1px solid var(--outline); 
+          border-radius: 12px; 
           cursor: pointer;
           color: var(--on-surface);
           display: flex;
           align-items: center;
           gap: 8px;
-          justify-content: center;
+          justify-content: flex-start; 
+          transition: all 0.2s; 
         }
 
         .control-button:hover {
-          background: var(--primary-light);
+          background: var(--primary-light); 
         }
 
 .main-content {
