@@ -253,8 +253,9 @@ const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', m
   const [editingKanbanCard, setEditingKanbanCard] = useState(null);
   const [draggedTodo, setDraggedTodo] = useState(null);
   const [draggedKanbanCard, setDraggedKanbanCard] = useState(null);
-  const panStart = useRef({ x: 0, y: 0 });
-  const workspaceRef = useRef(null);
+const panStart = useRef({ x: 0, y: 0 });
+const workspaceRef = useRef(null);
+const isZooming = useRef(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 const [sessionToken, setSessionToken] = useState(null);
 const [username, setUsername] = useState('');
@@ -288,7 +289,8 @@ const [settings, setSettings] = useLocalStorage('ark-notes-settings', {
   gridSize: 50,
   fontSize: 14,
   accentColor: '#6750a4',
-  darkMode: false
+  darkMode: false,
+  zoomSpeed: 0.1
 });
 
 
@@ -296,19 +298,37 @@ useEffect(() => {
   document.documentElement.setAttribute('data-theme', settings.darkMode ? 'dark' : 'light');
 }, [settings.darkMode]);
 
-
-  // Workspace pan & zoom - Changed to Alt key instead of Ctrl
-  const handleWheel = (e) => {
-    if (currentMode !== 'notes') return;
-    
-    if (e.altKey) {
-      e.preventDefault();
-      const delta = e.deltaY > 0 ? 0.9 : 1.1;
-      const newScale = Math.min(Math.max(workspaceTransform.scale * delta, 0.1), 5);
-      setWorkspaceTransform(prev => ({ ...prev, scale: newScale }));
-    }
-  };
-
+const handleWheel = (e) => {
+  if (currentMode !== 'notes' || !e.altKey || isZooming.current) return;
+  e.preventDefault();
+  e.stopPropagation();
+  
+  isZooming.current = true;
+  const container = workspaceRef.current;
+  const rect = container.getBoundingClientRect();
+  
+  // Mouse position relative to container
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+  
+  // Point in workspace coordinates
+  const wsX = (container.scrollLeft + mouseX) / workspaceTransform.scale;
+  const wsY = (container.scrollTop + mouseY) / workspaceTransform.scale;
+  
+  // Calculate new scale
+  const delta = e.deltaY > 0 ? (1 - (settings.zoomSpeed || 0.1)) : (1 + (settings.zoomSpeed || 0.1));
+  const newScale = Math.min(Math.max(workspaceTransform.scale * delta, 0.1), 5);
+  
+  // Update scale
+  setWorkspaceTransform(prev => ({ ...prev, scale: newScale }));
+  
+  // Adjust scroll immediately
+  requestAnimationFrame(() => {
+    container.scrollLeft = wsX * newScale - mouseX;
+    container.scrollTop = wsY * newScale - mouseY;
+    isZooming.current = false;
+  });
+};
 // Custom Prompt Dialog
 const PromptDialog = ({ isOpen, onClose, onConfirm, title, placeholder, defaultValue = '' }) => {
   const [inputValue, setInputValue] = useState(defaultValue);
@@ -1075,6 +1095,13 @@ html, #root {
         .icon-button.delete {
           color: var(--error);
         }
+          .kanban-column-header .icon-button {
+  color: white;
+}
+
+.kanban-column-header .icon-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
 
         .notes-container {
           width: 100%;
@@ -1254,11 +1281,16 @@ html, #root {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 16px;
+          padding: 12px 16px;
+          background: var(--primary);
+          color: white;
+          border-radius: 12px;
         }
 
         .kanban-column-title {
           font-size: 16px;
           font-weight: 500;
+          color: white;
         }
 
         .kanban-cards {
@@ -1607,30 +1639,30 @@ html, #root {
     {/* Zoom controls - only show in Notes mode */}
     {currentMode === 'notes' && (
       <>
-        <button
-          className="control-button"
-          onClick={() =>
-            setWorkspaceTransform((prev) => ({
-              ...prev,
-              scale: Math.min(prev.scale * 1.1, 5),
-            }))
-          }
-          title="Zoom In"
-        >
-          +
-        </button>
-        <button
-          className="control-button"
-          onClick={() =>
-            setWorkspaceTransform((prev) => ({
-              ...prev,
-              scale: Math.max(prev.scale * 0.9, 0.1),
-            }))
-          }
-          title="Zoom Out"
-        >
-          –
-        </button>
+<button
+  className="control-button"
+  onClick={() =>
+    setWorkspaceTransform((prev) => ({
+      ...prev,
+      scale: Math.min(prev.scale * (1 + settings.zoomSpeed * 2), 5),
+    }))
+  }
+  title="Zoom In"
+>
+  +
+</button>
+<button
+  className="control-button"
+  onClick={() =>
+    setWorkspaceTransform((prev) => ({
+      ...prev,
+      scale: Math.max(prev.scale * (1 - settings.zoomSpeed * 2), 0.1),
+    }))
+  }
+  title="Zoom Out"
+>
+  −
+</button>
       </>
     )}
 
@@ -1724,22 +1756,22 @@ html, #root {
           {/* Notes View */}
           {currentMode === 'notes' && (
             <div style={{ width: '100%', height: '100%', padding: '24px', boxSizing: 'border-box', position: 'relative' }}>
-              <div
-                className="notes-container"
-                ref={workspaceRef}
-                onWheel={handleWheel}
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
-              >
-                <div 
-                  className="notes-workspace"
-                  style={{
-                    transform: `translate(${workspaceTransform.x}px, ${workspaceTransform.y}px) scale(${workspaceTransform.scale})`,
-                    transformOrigin: '0 0'
-                  }}
-                >
+            <div
+              className="notes-container"
+              ref={workspaceRef}
+              onWheel={handleWheel}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+            >
+            <div 
+              className="notes-workspace"
+              style={{
+                transform: `scale(${workspaceTransform.scale})`,
+                transformOrigin: '0 0'
+              }}
+            >
                   {currentListData?.items?.length === 0 ? (
                     <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', opacity: 0.6 }}>
                       <h3>No notes yet</h3>
@@ -1873,18 +1905,26 @@ html, #root {
                   <button
                     className="add-button"
                     onClick={() => {
-                      const text = prompt('Card text:');
-                      if (text) {
-                        const newData = { ...data };
-                        if (!newData.kanban[currentList].columns[colId].items) {
-                          newData.kanban[currentList].columns[colId].items = [];
+                      setPromptDialog({
+                        isOpen: true,
+                        title: 'Add Card',
+                        placeholder: 'Enter card text...',
+                        defaultValue: '',
+                        onConfirm: (text) => {
+                          if (text.trim()) {
+                            const newData = { ...data };
+                            if (!newData.kanban[currentList].columns[colId].items) {
+                              newData.kanban[currentList].columns[colId].items = [];
+                            }
+                            newData.kanban[currentList].columns[colId].items.push({
+                              id: Date.now(),
+                              text
+                            });
+                            setData(newData);
+                            setPromptDialog({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null });
+                          }
                         }
-                        newData.kanban[currentList].columns[colId].items.push({
-                          id: Date.now(),
-                          text
-                        });
-                        setData(newData);
-                      }
+                      });
                     }}
                   >
                     + Add Card
@@ -1991,6 +2031,18 @@ html, #root {
       onChange={(e) => setSettings({ ...settings, gridSize: parseInt(e.target.value) })}
     />
   </div>
+
+  <div className="setting-group">
+  <label className="setting-label">Zoom Speed: {(settings.zoomSpeed * 100).toFixed(0)}%</label>
+  <input
+    type="range"
+    className="setting-input"
+    min="5"
+    max="30"
+    value={settings.zoomSpeed * 100}
+    onChange={(e) => setSettings({ ...settings, zoomSpeed: parseInt(e.target.value) / 100 })}
+  />
+</div>
 
   <div className="setting-group">
     <label className="setting-label">Data Management</label>
