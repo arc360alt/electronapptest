@@ -244,7 +244,7 @@ export default function App() {
   const [currentList, setCurrentList] = useState('default');
 
   const [showSettings, setShowSettings] = useState(false);
-  const [promptDialog, setPromptDialog] = useState({ isOpen: false, title: '', placeholder: '', onConfirm: null });
+  const [promptDialog, setPromptDialog] = useState({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null });
 const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', message: '', onConfirm: null });
   const [workspaceScale, setWorkspaceScale] = useState(1);
   const [workspaceTransform, setWorkspaceTransform] = useState({ x: 0, y: 0, scale: 1 });
@@ -267,7 +267,7 @@ const API_BASE = 'https://loginapinote.arc360hub.com';
 
   const [data, setData] = useLocalStorage('ark-notes-data', {
     todo: {
-      default: { name: 'My Todo List', items: [] }
+      default: { name: 'My ToDo List', items: [] }
     },
     notes: {
       default: { name: 'My Notes', items: [] }
@@ -436,7 +436,7 @@ const addItem = () => {
     setPromptDialog({
       isOpen: true,
       title: 'Add Task',
-      placeholder: 'Enter task...',
+      placeholder: 'Enter task...', defaultValue: '',
       onConfirm: (text) => {
         if (text.trim()) {
           const newData = { ...data };
@@ -446,7 +446,7 @@ const addItem = () => {
             completed: false
           });
           setData(newData);
-          setPromptDialog({ isOpen: false, title: '', placeholder: '', onConfirm: null });
+          setPromptDialog({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null });
         }
       }
     });
@@ -454,7 +454,7 @@ const addItem = () => {
     setPromptDialog({
       isOpen: true,
       title: 'Add Note',
-      placeholder: 'Note title...',
+      placeholder: 'Note title...', defaultValue: '',
       onConfirm: (title) => {
         if (title.trim()) {
           const newData = { ...data };
@@ -475,7 +475,7 @@ const addItem = () => {
             viewMode: 'edit'
           });
           setData(newData);
-          setPromptDialog({ isOpen: false, title: '', placeholder: '', onConfirm: null });
+          setPromptDialog({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null });
         }
       }
     });
@@ -483,14 +483,14 @@ const addItem = () => {
     setPromptDialog({
       isOpen: true,
       title: 'Add Column',
-      placeholder: 'Column name...',
+      placeholder: 'Column name...', defaultValue: '',
       onConfirm: (name) => {
         if (name.trim()) {
           const newData = { ...data };
           const id = Date.now().toString();
           newData.kanban[currentList].columns[id] = { name, items: [] };
           setData(newData);
-          setPromptDialog({ isOpen: false, title: '', placeholder: '', onConfirm: null });
+          setPromptDialog({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null });
         }
       }
     });
@@ -502,7 +502,7 @@ const addList = () => {
   setPromptDialog({
     isOpen: true,
     title: currentMode === 'todo' ? 'Add Todo List' : currentMode === 'notes' ? 'Add Notebook' : 'Add Board',
-    placeholder: 'List name...',
+    placeholder: 'List name...', defaultValue: '',
     onConfirm: (name) => {
       if (name.trim()) {
         const newData = { ...data };
@@ -525,7 +525,7 @@ const addList = () => {
         
         setData(newData);
         setCurrentList(id);
-        setPromptDialog({ isOpen: false, title: '', placeholder: '', onConfirm: null });
+        setPromptDialog({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null });
       }
     }
   });
@@ -1507,20 +1507,47 @@ html, #root {
               onClick={() => setCurrentList(id)}
             >
               <span>{list.name}</span>
-              {Object.keys(data[currentMode]).length > 1 && (
-                <Trash2
-                  size={16}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const newData = { ...data };
-                    delete newData[currentMode][id];
-                    setData(newData);
-                    if (id === currentList) {
-                      setCurrentList(Object.keys(newData[currentMode])[0]);
+<div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <Edit3
+              size={16}
+              onClick={(e) => {
+                e.stopPropagation();
+                setPromptDialog({
+                  isOpen: true,
+                  title: 'Rename Workspace',
+                  placeholder: 'Enter new name...',
+                  defaultValue: list.name, // Pre-fill with current name
+                  onConfirm: (newName) => {
+                    if (newName.trim()) {
+                      const newData = { ...data };
+                      newData[currentMode][id].name = newName.trim();
+                      setData(newData);
                     }
-                  }}
-                />
-              )}
+                    setPromptDialog({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null });
+                  },
+                });
+              }}
+              style={{ cursor: 'pointer', flexShrink: 0 }}
+              className="icon-button"
+            />
+            {Object.keys(data[currentMode]).length > 1 && (
+              <Trash2
+                size={16}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  // This is your existing delete logic
+                  const newData = { ...data };
+                  delete newData[currentMode][id];
+                  setData(newData);
+                  if (id === currentList) {
+                    setCurrentList(Object.keys(newData[currentMode])[0]);
+                  }
+                }}
+                style={{ cursor: 'pointer', flexShrink: 0, color: 'var(--error)' }}
+                className="icon-button"
+              />
+            )}
+          </div>
             </div>
           ))}
           <button className="add-button" onClick={addList} style={{ marginTop: '8px' }}>
@@ -1983,13 +2010,14 @@ html, #root {
 </Modal>
       
 {/* Prompt and Confirm Dialogs */}
-      <PromptDialog
-        isOpen={promptDialog.isOpen}
-        onClose={() => setPromptDialog({ isOpen: false, title: '', placeholder: '', onConfirm: null })}
-        onConfirm={promptDialog.onConfirm}
-        title={promptDialog.title}
-        placeholder={promptDialog.placeholder}
-      />
+<PromptDialog
+    isOpen={promptDialog.isOpen}
+    onClose={() => setPromptDialog({ isOpen: false, title: '', placeholder: '', defaultValue: '', onConfirm: null })}
+    onConfirm={promptDialog.onConfirm}
+    title={promptDialog.title}
+    placeholder={promptDialog.placeholder}
+    defaultValue={promptDialog.defaultValue}
+  />
 
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
