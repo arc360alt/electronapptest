@@ -1,10 +1,7 @@
 name: Build Electron App
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
+  workflow_dispatch: # allows manual triggering
 
 jobs:
   build:
@@ -22,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Use your preferred Node version
+          node-version: '20'  # match your Node.js version
 
       - name: Install dependencies
         run: npm ci
