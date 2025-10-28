@@ -1476,7 +1476,7 @@ html, #root {
 
       {/* Sidebar */}
       <div className="sidebar">
-        <h1>Ark Notes</h1>
+        <h1>A Notes App</h1>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <button
@@ -1484,7 +1484,7 @@ html, #root {
             onClick={() => setCurrentMode('todo')}
           >
             <Check size={18} />
-            Todo Lists
+            ToDo Lists
           </button>
           <button
             className={`mode-button ${currentMode === 'notes' ? 'active' : ''}`}
